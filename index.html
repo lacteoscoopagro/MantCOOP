@@ -1,0 +1,584 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>MantCOOP</title>
+<meta name="theme-color" content="#1f5c3a">
+<link rel="manifest" href="manifest.json">
+<link rel="icon" href="icon.svg" type="image/svg+xml">
+<link rel="apple-touch-icon" href="apple-touch-icon.png">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="MantCOOP">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Google+Sans+Flex:opsz,wght@6..144,400..700&display=swap" rel="stylesheet">
+<style>
+:root{--verde:#1f5c3a;--verde2:#2e7d4f;--crema:#f6f1e3;--crema2:#ece4cc;--txt:#1d2a22;--gris:#6b7568;
+--ok:#2e7d4f;--warn:#d08a10;--bad:#c0392b;--r:16px}
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:'Google Sans Flex','Google Sans',system-ui,sans-serif;background:var(--crema);color:var(--txt);min-height:100vh;padding-bottom:80px}
+header{background:var(--verde);color:#fff;padding:14px 16px calc(14px) ;display:flex;align-items:center;gap:10px;position:sticky;top:0;z-index:5}
+header button{background:none;border:0;color:#fff;font-size:22px;cursor:pointer;width:32px}
+header h1{flex:1;font-size:19px;font-weight:600;text-align:center}
+header img{height:34px;background:#fff;border-radius:8px;padding:2px 4px}
+main{max-width:760px;margin:0 auto;padding:16px}
+h2{text-align:center;font-weight:600;margin:6px 0 16px;font-size:22px;color:var(--verde)}
+.circulos{display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:18px;margin:10px 0 26px;justify-items:center}
+.circulo{width:140px;height:140px;border-radius:50%;background:#fff;border:3px solid var(--verde);display:flex;flex-direction:column;
+align-items:center;justify-content:center;gap:6px;cursor:pointer;text-align:center;font-weight:600;color:var(--verde);font-size:15px;
+box-shadow:0 4px 12px rgba(31,92,58,.12);transition:transform .15s}
+.circulo:active{transform:scale(.96)}
+.circulo span{font-size:38px}
+.card{background:#fff;border-radius:var(--r);padding:14px 16px;margin-bottom:12px;box-shadow:0 2px 8px rgba(0,0,0,.05)}
+.estado-row{display:flex;justify-content:space-between;align-items:center;gap:10px}
+.pill{padding:4px 10px;border-radius:999px;font-size:13px;font-weight:600;white-space:nowrap}
+.p-ok{background:#dcefe2;color:var(--ok)}.p-warn{background:#fbecd0;color:#94600a}.p-bad{background:#f7d9d5;color:var(--bad)}.p-gris{background:#eee;color:#555}
+label{display:block;font-size:13px;color:var(--gris);margin:10px 0 4px;font-weight:600}
+select,input,textarea{width:100%;padding:11px 12px;border:1.5px solid var(--crema2);border-radius:12px;font:inherit;font-size:16px;background:#fff}
+textarea{min-height:60px;resize:vertical}
+.fila2{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.grupo{margin-top:18px}
+.grupo h3{font-size:15px;color:var(--verde);padding:6px 2px;border-bottom:2px solid var(--crema2);margin-bottom:8px}
+.item{background:#fff;border-radius:14px;padding:12px;margin-bottom:8px;border-left:5px solid #ddd}
+.item.ok{border-left-color:var(--ok)}.item.falla{border-left-color:var(--bad)}.item.na{border-left-color:#aaa}
+.item .t{font-weight:600}.item .c{font-size:13px;color:var(--gris);margin-top:2px}
+.btns{display:flex;gap:6px;margin-top:10px}
+.btns button{flex:1;padding:9px 4px;border-radius:10px;border:1.5px solid var(--crema2);background:#fafaf6;font:inherit;font-weight:600;cursor:pointer}
+.btns .s-ok{background:var(--ok);color:#fff;border-color:var(--ok)}
+.btns .s-falla{background:var(--bad);color:#fff;border-color:var(--bad)}
+.btns .s-na{background:#888;color:#fff;border-color:#888}
+.item textarea{margin-top:8px}
+.btn{display:block;width:100%;padding:14px;border:0;border-radius:14px;background:var(--verde);color:#fff;font:inherit;font-size:17px;font-weight:600;cursor:pointer;margin-top:18px}
+.btn:disabled{opacity:.5}
+.btn.sec{background:#fff;color:var(--verde);border:2px solid var(--verde)}
+.progreso{position:sticky;top:62px;background:var(--crema);padding:8px 0;z-index:3;font-size:14px;color:var(--gris);text-align:center}
+.barra{height:6px;background:var(--crema2);border-radius:6px;overflow:hidden;margin-top:4px}.barra div{height:100%;background:var(--verde2);transition:width .2s}
+.tabs{display:flex;gap:6px;margin-bottom:12px;flex-wrap:wrap}
+.tabs button{flex:1;padding:9px;border-radius:999px;border:1.5px solid var(--verde);background:#fff;color:var(--verde);font:inherit;font-weight:600;cursor:pointer}
+.tabs button.on{background:var(--verde);color:#fff}
+.hist{font-size:14px}.hist .meta{color:var(--gris);font-size:13px}
+.hist ul{margin:8px 0 0 18px}
+.termo-res{display:flex;align-items:center;justify-content:space-between;margin-top:12px;padding:12px;border-radius:12px;background:var(--crema)}
+.termo-res b{font-size:26px}
+.foto-prev{max-width:100%;border-radius:12px;margin-top:8px;display:none}
+.toast{position:fixed;left:50%;bottom:24px;transform:translateX(-50%);background:var(--txt);color:#fff;padding:12px 18px;border-radius:12px;font-size:15px;z-index:20;display:none;max-width:90%}
+.demo{background:#fbecd0;color:#94600a;text-align:center;font-size:13px;padding:6px}
+.vacio{text-align:center;color:var(--gris);padding:30px 0}
+.oculto{display:none!important}
+a{color:var(--verde2)}
+.item .tarea{font-size:14px;margin-top:2px}
+.numrow{display:flex;align-items:center;gap:8px;margin-top:10px}.numrow input{flex:1}.unidad{min-width:48px;color:var(--gris);font-weight:600}
+.aviso{margin-top:8px;font-size:13px;background:#fbecd0;color:#94600a;padding:8px 10px;border-radius:10px}
+.link{background:none;border:0;color:var(--verde2);font:inherit;font-size:13px;margin-top:8px;cursor:pointer;padding:0}
+.circulos.sect{grid-template-columns:repeat(auto-fit,minmax(105px,1fr));gap:14px}
+.circulo.chico{width:108px;height:108px;font-size:12.5px;padding:8px;gap:4px;line-height:1.15}
+.circulo.chico .nombre{font-size:12.5px}.circulo.chico .cuenta{font-size:13px;background:var(--crema);border-radius:999px;padding:1px 8px;color:var(--gris)}
+.circulo.chico .cuenta.urg{background:#f7d9d5;color:var(--bad)}.circulo.completo{background:#dcefe2}
+.graf{width:100%;height:auto;margin-top:8px;display:block}.mini{width:70px;height:26px}
+.punto .der{display:flex;align-items:center;gap:8px}
+.leyenda{display:flex;gap:12px;flex-wrap:wrap;font-size:12px;color:var(--gris);margin-top:4px}.leyenda i{display:inline-block;width:9px;height:9px;border-radius:50%;margin-right:4px;vertical-align:-1px}
+.leyenda .hoyi{background:#fff;border:2px solid #1f5c3a;width:7px;height:7px}
+.quien{display:flex;align-items:center;gap:6px;font-size:15px}.quien .link{margin:0 0 0 6px}
+.acceso{max-width:380px;margin:40px auto 0;text-align:center;background:#fff;border-radius:22px;padding:28px 22px;box-shadow:0 4px 18px rgba(31,92,58,.12)}
+.acceso .logo-acc{max-width:180px;margin:0 auto 6px;display:block}.ico-acc{font-size:46px;width:96px;height:96px;border-radius:50%;border:3px solid var(--verde);display:flex;align-items:center;justify-content:center;margin:6px auto 8px}
+.nombres{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:10px}
+.nombres button{padding:18px 10px;border-radius:16px;border:2px solid var(--verde);background:#fff;color:var(--verde);font:inherit;font-size:17px;font-weight:600;cursor:pointer}
+.nombres button:active{background:var(--verde);color:#fff}
+.quien select{width:auto;flex:1;padding:8px 10px;font-weight:600}
+.circulo.chico .frec{font-size:10.5px;font-weight:500;color:var(--gris)}
+.punto.pend{border-left:5px solid var(--warn)}
+.punto{background:#fff;border-radius:14px;padding:12px 14px;margin-bottom:8px;display:flex;justify-content:space-between;align-items:center;gap:10px;cursor:pointer}
+.punto .t{font-weight:600}.punto .c{font-size:13px;color:var(--gris)}.flecha{font-size:24px;color:var(--gris)}
+.item.warnb{border-left-color:var(--warn)}
+.prev{display:flex;gap:12px;margin-top:8px;align-items:center}.prev img{width:110px;border-radius:10px}.grande{font-size:26px;font-weight:700}
+.btn.foto{margin-top:0;font-size:18px}
+.ocr{display:flex;flex-direction:column;gap:6px;margin-top:10px;background:var(--crema);padding:10px;border-radius:12px;font-size:14px}.ocr img{max-width:100%;border-radius:8px;background:#fff}
+.consumos{display:grid;grid-template-columns:1fr 1fr;gap:6px;margin-top:10px}
+.consumos div{background:var(--crema);border-radius:10px;padding:8px 10px;display:flex;flex-direction:column;font-size:12px;color:var(--gris)}
+.consumos div b{font-size:16px;color:var(--txt)}.consumos .tot{background:#dcefe2}
+
+</style>
+</head>
+<body>
+<div id="demo" class="demo oculto">Modo demostración: los datos se guardan solo en este dispositivo. Configurá API_URL para usar la planilla.</div>
+<header>
+  <button id="volver" class="oculto" onclick="ir('inicio')" aria-label="Volver">‹</button>
+  <h1 id="titulo">MantCOOP</h1>
+  <img src="logo.png" alt="COOPAGRO" onerror="this.style.display='none'">
+</header>
+<main id="app"></main>
+<div id="toast" class="toast"></div>
+
+<script>
+/* ====== CONFIGURACIÓN ====== */
+const API_URL = 'https://script.google.com/macros/s/AKfycbyK1E9LY1pvoq_dMm7hdTDOeox0RED2Lsa0_3ZoS9xjA3mhZGaXjQHVPoeibosfzEad/exec'; // ← pegar acá la URL de la App web de Apps Script (termina en /exec)
+
+/* ====== Estado ====== */
+let CFG = null, HIST = null, BORRADOR = null;
+const $ = s => document.querySelector(s);
+const esc = s => String(s ?? '').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const hoy = () => { const d = new Date(); return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0'); };
+const horaAhora = () => new Date().toTimeString().slice(0,5);
+const fFecha = f => { const [y,m,d] = String(f).split('-'); return d+'/'+m+'/'+y; };
+function semanaISO(f){const d=new Date(f+'T12:00:00');const t=new Date(Date.UTC(d.getFullYear(),d.getMonth(),d.getDate()));const w=t.getUTCDay()||7;t.setUTCDate(t.getUTCDate()+4-w);const i=new Date(Date.UTC(t.getUTCFullYear(),0,1));return t.getUTCFullYear()+'-S'+String(Math.ceil(((t-i)/864e5+1)/7)).padStart(2,'0');}
+function toast(m, ms=2600){const t=$('#toast');t.textContent=m;t.style.display='block';clearTimeout(t._t);t._t=setTimeout(()=>t.style.display='none',ms);}
+let USER=''; // responsable de la sección actual: se elige al entrar y se borra al volver al inicio (no se guarda en el teléfono)
+function getResp(){ return USER; }
+function setResp(v){ USER=v; }
+
+/* ====== Datos demo (sin API) ====== */
+function CRITERIOS_DEF_DEMO(){return [{severidad:'Normal',desde:null,hasta:5,accion:'Sin acción',seguimiento:false},{severidad:'Moderada',desde:5,hasta:15,accion:'Programar revisión y ajuste',seguimiento:true},{severidad:'Urgente',desde:15,hasta:null,accion:'Ajuste y limpieza inmediata',seguimiento:true}];}
+const DEMO_CFG = {"sectores": [{"sector": "Planta de efluentes", "frecuencia": 1}, {"sector": "Sala de compresor de aire", "frecuencia": 1}, {"sector": "Sala de Osmosis", "frecuencia": 1}, {"sector": "Sala de compresores", "frecuencia": 1}, {"sector": "CCM", "frecuencia": 3}, {"sector": "UTA", "frecuencia": 6}, {"sector": "Entretecho", "frecuencia": 12}, {"sector": "Oficina", "frecuencia": 6}], "criterios": CRITERIOS_DEF_DEMO(), "responsables": ["Fernando", "Luis"], "checklist": [{"tipo": "Diario", "codigo": "PB0_FILTRO", "sector": "Pozo de bombeo", "equipo": "Filtro primario", "tarea": "Realizar limpieza de filtro primario", "respuesta": "OK/NO OK", "unidad": "", "min": null, "max": null, "ref": "", "acum": false}, {"tipo": "Diario", "codigo": "P1_FUNC", "sector": "Pozo de bombeo 1", "equipo": "Frente a las oficinas", "tarea": "Funcionamiento", "respuesta": "OK/NO OK", "unidad": "", "min": null, "max": null, "ref": "", "acum": false}, {"tipo": "Diario", "codigo": "P1_M3", "sector": "Pozo de bombeo 1", "equipo": "Frente a las oficinas", "tarea": "Cantidad (lectura caudalímetro)", "respuesta": "Número", "unidad": "m³", "min": null, "max": null, "ref": "", "acum": true}, {"tipo": "Diario", "codigo": "SOP1", "sector": "Efluente", "equipo": "Soplador 1", "tarea": "Revisión nivel de aceite / filtro obstruido / correas en buen estado / térmico del tablero eléctrico funcionando", "respuesta": "OK/NO OK", "unidad": "", "min": null, "max": null, "ref": "Visor de aceite a la mitad / indicador de filtro tapado que no supere el 50 %", "acum": false}, {"tipo": "Diario", "codigo": "SOP2", "sector": "Efluente", "equipo": "Soplador 2", "tarea": "Revisión nivel de aceite / filtro obstruido / correas en buen estado / térmico del tablero eléctrico funcionando", "respuesta": "OK/NO OK", "unidad": "", "min": null, "max": null, "ref": "Visor de aceite a la mitad / indicador de filtro tapado que no supere el 50 %", "acum": false}, {"tipo": "Diario", "codigo": "SOP3", "sector": "Efluente", "equipo": "Soplador 3", "tarea": "Revisión nivel de aceite / filtro obstruido / correas en buen estado / térmico del tablero eléctrico funcionando", "respuesta": "OK/NO OK", "unidad": "", "min": null, "max": null, "ref": "Visor de aceite a la mitad / indicador de filtro tapado que no supere el 50 %", "acum": false}, {"tipo": "Diario", "codigo": "SOP4", "sector": "Efluente", "equipo": "Soplador 4", "tarea": "Revisión nivel de aceite / filtro obstruido / correas en buen estado / térmico del tablero eléctrico funcionando", "respuesta": "OK/NO OK", "unidad": "", "min": null, "max": null, "ref": "Visor de aceite a la mitad / indicador de filtro tapado que no supere el 50 %", "acum": false}, {"tipo": "Diario", "codigo": "SOP_HS", "sector": "Efluente", "equipo": "Sopladores", "tarea": "Hs de marcha - consumo", "respuesta": "Número", "unidad": "h", "min": null, "max": null, "ref": "Consumo 36 A", "acum": true}, {"tipo": "Diario", "codigo": "CLOR", "sector": "Efluente", "equipo": "Clorinador", "tarea": "Control de nivel de cloro y reposición según nivel", "respuesta": "OK/NO OK", "unidad": "", "min": null, "max": null, "ref": "", "acum": false}, {"tipo": "Diario", "codigo": "P2_FUNC", "sector": "Pozo de bombeo 2", "equipo": "Efluentes", "tarea": "Funcionamiento", "respuesta": "OK/NO OK", "unidad": "", "min": null, "max": null, "ref": "", "acum": false}, {"tipo": "Diario", "codigo": "P2_M3", "sector": "Pozo de bombeo 2", "equipo": "Efluentes", "tarea": "Cantidad (lectura caudalímetro)", "respuesta": "Número", "unidad": "m³", "min": null, "max": null, "ref": "", "acum": true}, {"tipo": "Diario", "codigo": "OSM", "sector": "Sala de ósmosis", "equipo": "Ósmosis", "tarea": "Check list propio del sector / nivel desincrustante / indicador nivel tanque de ósmosis", "respuesta": "OK/NO OK/OFF", "unidad": "", "min": null, "max": null, "ref": "", "acum": false}, {"tipo": "Diario", "codigo": "CB_PRES_EST", "sector": "Sala de ósmosis", "equipo": "Cuadro de bombeo", "tarea": "Presión del cuadro", "respuesta": "OK/NO OK", "unidad": "", "min": null, "max": null, "ref": "", "acum": false}, {"tipo": "Diario", "codigo": "CB_PRES", "sector": "Sala de ósmosis", "equipo": "Cuadro de bombeo", "tarea": "Presión del cuadro", "respuesta": "Número", "unidad": "bar", "min": null, "max": null, "ref": "", "acum": false}, {"tipo": "Diario", "codigo": "CB_CAUD_EST", "sector": "Sala de ósmosis", "equipo": "Cuadro de bombeo", "tarea": "Caudalímetro", "respuesta": "OK/NO OK", "unidad": "", "min": null, "max": null, "ref": "", "acum": false}, {"tipo": "Diario", "codigo": "CB_CAUD", "sector": "Sala de ósmosis", "equipo": "Cuadro de bombeo", "tarea": "Caudalímetro - consumo de agua (lectura)", "respuesta": "Número", "unidad": "m³/10", "min": null, "max": null, "ref": "La lectura se multiplica por 10 para el cálculo", "acum": true}, {"tipo": "Diario", "codigo": "COMP_REV", "sector": "Compresor de aire", "equipo": "Compresor de aire", "tarea": "Revisión nivel de aceite / correas / purga de agua / presión de aire", "respuesta": "SI/NO", "unidad": "", "min": null, "max": null, "ref": "Presión de trabajo 7,5 kgf. Nivel de aceite con el compresor parado", "acum": false}, {"tipo": "Diario", "codigo": "COMP_HS", "sector": "Compresor de aire", "equipo": "Compresor de aire", "tarea": "Horas de marcha comprimiendo (D4)", "respuesta": "Número", "unidad": "h", "min": null, "max": null, "ref": "", "acum": true}, {"tipo": "Diario", "codigo": "COMP_PRES", "sector": "Compresor de aire", "equipo": "Compresor de aire", "tarea": "Presión", "respuesta": "Número", "unidad": "bar", "min": null, "max": null, "ref": "", "acum": false}, {"tipo": "Diario", "codigo": "SEP_ACEITE", "sector": "Sala de máquinas - Refrigeración", "equipo": "Separador de aceite", "tarea": "Nivel de aceite", "respuesta": "OK/NO OK", "unidad": "", "min": null, "max": null, "ref": "Debe indicar los dos niveles llenos", "acum": false}, {"tipo": "Diario", "codigo": "C1_HS", "sector": "Sala de máquinas - Refrigeración", "equipo": "Compresor 1", "tarea": "Horas de marcha", "respuesta": "Número", "unidad": "h", "min": null, "max": null, "ref": "", "acum": true}, {"tipo": "Diario", "codigo": "C2_HS", "sector": "Sala de máquinas - Refrigeración", "equipo": "Compresor 2", "tarea": "Horas de marcha", "respuesta": "Número", "unidad": "h", "min": null, "max": null, "ref": "", "acum": true}, {"tipo": "Diario", "codigo": "T_CAMARA", "sector": "Sala de máquinas - Refrigeración", "equipo": "SCADA - Cámara de frío", "tarea": "Temperatura actual cámara de conservación", "respuesta": "Número", "unidad": "°C", "min": null, "max": null, "ref": "", "acum": false}, {"tipo": "Diario", "codigo": "T_PLACAS", "sector": "Sala de máquinas - Refrigeración", "equipo": "SCADA - Enfriador de placas", "tarea": "Temperatura actual", "respuesta": "Número", "unidad": "°C", "min": null, "max": null, "ref": "", "acum": false}, {"tipo": "Diario", "codigo": "T_SALMUERA", "sector": "Sala de máquinas - Refrigeración", "equipo": "SCADA - Salmuera", "tarea": "Temperatura actual", "respuesta": "Número", "unidad": "°C", "min": null, "max": null, "ref": "", "acum": false}, {"tipo": "Diario", "codigo": "AGUA_HELADA", "sector": "Sala de máquinas - Refrigeración", "equipo": "SCADA - Bombeo de agua helada", "tarea": "Control nivel de agua helada / pérdida de agua / flujostato", "respuesta": "OK/NO OK", "unidad": "", "min": null, "max": null, "ref": "", "acum": false}, {"tipo": "Diario", "codigo": "COND_NIVEL", "sector": "Sala de máquinas - Refrigeración", "equipo": "Condensador", "tarea": "Nivel de agua batea condensador", "respuesta": "OK/NO OK", "unidad": "", "min": null, "max": null, "ref": "", "acum": false}, {"tipo": "Diario", "codigo": "COND_CONDUCT", "sector": "Sala de máquinas - Refrigeración", "equipo": "Condensador", "tarea": "Medición conductividad", "respuesta": "Número", "unidad": "µS/cm", "min": null, "max": 2000, "ref": "Menor a 2000 µS/cm", "acum": false}, {"tipo": "Diario", "codigo": "WATERPRO", "sector": "Sala de máquinas - Refrigeración", "equipo": "Condensador", "tarea": "Funcionamiento Waterpro", "respuesta": "OK/NO OK", "unidad": "", "min": null, "max": null, "ref": "Corriente que no supere 5 A / funcionamiento de la bomba", "acum": false}, {"tipo": "Diario", "codigo": "P3_FUNC", "sector": "Pozo de bombeo 3", "equipo": "Tanque", "tarea": "Funcionamiento", "respuesta": "OK/NO OK", "unidad": "", "min": null, "max": null, "ref": "", "acum": false}, {"tipo": "Diario", "codigo": "P3_M3", "sector": "Pozo de bombeo 3", "equipo": "Tanque", "tarea": "Cantidad (lectura caudalímetro)", "respuesta": "Número", "unidad": "m³", "min": null, "max": null, "ref": "", "acum": true}, {"tipo": "Diario", "codigo": "SOLAR", "sector": "Paneles solares", "equipo": "Paneles solares", "tarea": "¿Correcto funcionamiento?", "respuesta": "SI/NO", "unidad": "", "min": null, "max": null, "ref": "El inversor no debe tener indicador luminoso en rojo", "acum": false}, {"tipo": "Diario", "codigo": "T_TRAFO", "sector": "Subestación", "equipo": "Transformador", "tarea": "Temperatura del transformador", "respuesta": "Número", "unidad": "°C", "min": null, "max": 90, "ref": "No debe superar 90 °C", "acum": false}, {"tipo": "Diario", "codigo": "SF6", "sector": "Subestación", "equipo": "Celda", "tarea": "Carga gas SF6 (presión)", "respuesta": "VERDE/ROJO", "unidad": "", "min": null, "max": null, "ref": "Dentro de la línea verde", "acum": false}, {"tipo": "Diario", "codigo": "ABL", "sector": "Sala de ablandadores", "equipo": "Ablandadores", "tarea": "Check list propio del sector", "respuesta": "OK/NO OK", "unidad": "", "min": null, "max": null, "ref": "Mantener 40 % de llenado", "acum": false}, {"tipo": "Diario", "codigo": "ABL1", "sector": "Sala de ablandadores", "equipo": "Ablandador 1", "tarea": "Funcionamiento de bomba eléctrica", "respuesta": "OK/NO OK", "unidad": "", "min": null, "max": null, "ref": "", "acum": false}, {"tipo": "Diario", "codigo": "ABL2", "sector": "Sala de ablandadores", "equipo": "Ablandador 2", "tarea": "Funcionamiento de bomba eléctrica", "respuesta": "OK/NO OK", "unidad": "", "min": null, "max": null, "ref": "", "acum": false}, {"tipo": "Diario", "codigo": "ABL3", "sector": "Sala de ablandadores", "equipo": "Ablandador 3", "tarea": "Funcionamiento de bomba eléctrica", "respuesta": "OK/NO OK", "unidad": "", "min": null, "max": null, "ref": "", "acum": false}, {"tipo": "Diario", "codigo": "CALDERA", "sector": "Caldera", "equipo": "Caldera", "tarea": "Funcionamiento control nivel anti-incrustante", "respuesta": "OK/NO OK", "unidad": "", "min": null, "max": null, "ref": "", "acum": false}, {"tipo": "Diario", "codigo": "REDA_L", "sector": "Sala de tratamiento de leche", "equipo": "Desnatadora REDA", "tarea": "Horas de marcha", "respuesta": "Número", "unidad": "h", "min": null, "max": null, "ref": "Clave 4444", "acum": true}, {"tipo": "Diario", "codigo": "REDA_S", "sector": "Sala de tratamiento de suero", "equipo": "Desnatadora REDA", "tarea": "Horas de marcha", "respuesta": "Número", "unidad": "h", "min": null, "max": null, "ref": "", "acum": true}, {"tipo": "Semanal", "codigo": "S_EJ1", "sector": "Sala de máquinas", "equipo": "Compresor de aire", "tarea": "Drenaje de condensado (EJEMPLO)", "respuesta": "OK/NO OK", "unidad": "", "min": null, "max": null, "ref": "", "acum": false}, {"tipo": "Semanal", "codigo": "S_EJ2", "sector": "Tinas", "equipo": "Motorreductores", "tarea": "Nivel de aceite (EJEMPLO)", "respuesta": "OK/NO OK", "unidad": "", "min": null, "max": null, "ref": "", "acum": false}, {"tipo": "Semanal", "codigo": "S_EJ3", "sector": "Saladero", "equipo": "Bombas de salmuera", "tarea": "Estado de sellos (EJEMPLO)", "respuesta": "OK/NO OK", "unidad": "", "min": null, "max": null, "ref": "", "acum": false}, {"tipo": "Semanal", "codigo": "S_EJ4", "sector": "General", "equipo": "Tableros eléctricos", "tarea": "Limpieza y cierre (EJEMPLO)", "respuesta": "OK/NO OK", "unidad": "", "min": null, "max": null, "ref": "", "acum": false}], "ultimas": {"P1_M3": 108728, "SOP_HS": 12127.13, "P2_M3": 55132, "CB_PRES": 3, "CB_CAUD": 10530, "COMP_HS": 9962, "COMP_PRES": 7.1, "C1_HS": 11999, "C2_HS": 1354, "T_CAMARA": 2.3, "T_PLACAS": 4.9, "T_SALMUERA": 4.7, "COND_CONDUCT": 998, "P3_M3": 77330, "T_TRAFO": 57, "REDA_L": 3049, "REDA_S": 2973}, "ultimaFecha": "2026-11-13", "puntos": [{"codigo": "T01", "sector": "Planta de efluentes", "id": "Soplador 1", "equipo": "Motor electrico", "componente": ""}, {"codigo": "T02", "sector": "Planta de efluentes", "id": "Soplador 2", "equipo": "", "componente": ""}, {"codigo": "T03", "sector": "Planta de efluentes", "id": "Soplador 3", "equipo": "", "componente": ""}, {"codigo": "T04", "sector": "Planta de efluentes", "id": "Soplador 4", "equipo": "", "componente": ""}, {"codigo": "T05", "sector": "Planta de efluentes", "id": "Tablero electrico", "equipo": "Tablero electrico", "componente": ""}, {"codigo": "T06", "sector": "Sala de compresor de aire", "id": "Compresor de aire", "equipo": "Tablero electrico", "componente": ""}, {"codigo": "T07", "sector": "Sala de compresor de aire", "id": "Inversor de paneles solares", "equipo": "", "componente": ""}, {"codigo": "T08", "sector": "Sala de compresor de aire", "id": "Tablero de distribucion principal", "equipo": "PN°1", "componente": ""}, {"codigo": "T09", "sector": "Sala de compresor de aire", "id": "Tablero de distribucion principal", "equipo": "PN°2", "componente": ""}, {"codigo": "T10", "sector": "Sala de compresor de aire", "id": "Tablero de distribucion principal", "equipo": "PN°3", "componente": ""}, {"codigo": "T11", "sector": "Sala de compresor de aire", "id": "Tablero de distribucion principal", "equipo": "PN°4", "componente": ""}, {"codigo": "T12", "sector": "Sala de Osmosis", "id": "Tablero pozos de bombeo", "equipo": "", "componente": ""}, {"codigo": "T13", "sector": "Sala de Osmosis", "id": "Tablero cuadro de bombeo", "equipo": "", "componente": ""}, {"codigo": "T14", "sector": "Sala de Osmosis", "id": "Tablero de mando Osmosis", "equipo": "", "componente": ""}, {"codigo": "T15", "sector": "Sala de compresores", "id": "Tablero de camara", "equipo": "", "componente": ""}, {"codigo": "T16", "sector": "Sala de compresores", "id": "Tablero condensador evaporativo", "equipo": "", "componente": ""}, {"codigo": "T17", "sector": "Sala de compresores", "id": "tablero plc central", "equipo": "", "componente": ""}, {"codigo": "T18", "sector": "Sala de compresores", "id": "Tablero cuadro de bombeo", "equipo": "", "componente": ""}, {"codigo": "T19", "sector": "Sala de compresores", "id": "tablero compresor N°1", "equipo": "", "componente": ""}, {"codigo": "T20", "sector": "Sala de compresores", "id": "tablero compresor N°2", "equipo": "", "componente": ""}, {"codigo": "T21", "sector": "CCM", "id": "Tabero TRI1", "equipo": "", "componente": ""}, {"codigo": "T22", "sector": "CCM", "id": "Tablero TGDI2", "equipo": "", "componente": ""}, {"codigo": "T23", "sector": "CCM", "id": "Tablero TDI3", "equipo": "", "componente": ""}, {"codigo": "T24", "sector": "CCM", "id": "Tablero TDI4", "equipo": "", "componente": ""}, {"codigo": "T25", "sector": "CCM", "id": "Tablero TDI5", "equipo": "", "componente": ""}, {"codigo": "T26", "sector": "CCM", "id": "Tablero TPLC-Central IMAI", "equipo": "", "componente": ""}, {"codigo": "T27", "sector": "CCM", "id": "Tablero TGDA1", "equipo": "", "componente": ""}, {"codigo": "T28", "sector": "CCM", "id": "tablero ADC05", "equipo": "", "componente": ""}, {"codigo": "T29", "sector": "CCM", "id": "Tablero ADC06", "equipo": "", "componente": ""}, {"codigo": "T30", "sector": "CCM", "id": "Tablero ADC08", "equipo": "", "componente": ""}, {"codigo": "T31", "sector": "CCM", "id": "Tablero CAT/BV", "equipo": "", "componente": ""}, {"codigo": "T32", "sector": "CCM", "id": "Tablero BC/BT/JWT", "equipo": "", "componente": ""}, {"codigo": "T33", "sector": "CCM", "id": "Tablero MC4740", "equipo": "", "componente": ""}, {"codigo": "T34", "sector": "CCM", "id": "Tablero TPLC-Central Alpma", "equipo": "", "componente": ""}, {"codigo": "T35", "sector": "UTA", "id": "Tablero electrico general", "equipo": "", "componente": ""}, {"codigo": "T36", "sector": "UTA", "id": "Tablero de plc central", "equipo": "", "componente": ""}, {"codigo": "T37", "sector": "Entretecho", "id": "Tablero de distribucion paneles solares", "equipo": "", "componente": ""}, {"codigo": "T38", "sector": "Oficina", "id": "Tablero de distribucion N°1", "equipo": "", "componente": ""}, {"codigo": "T39", "sector": "Oficina", "id": "Tablero de distribucion N°2", "equipo": "", "componente": ""}]};
+const DEMO_TERMO=[{"id": "TER-D1", "fecha": "2026-05-12", "hora": "10:00", "responsable": "Fernando", "codigo": "T01", "sector": "Planta de efluentes", "idEquipo": "Soplador 1", "equipo": "Motor electrico", "componente": "", "carga": "", "temp": 33.1, "ref": "", "dt": "", "severidad": "Normal", "accion": "Sin acción", "estado": "", "obs": "", "foto": ""}, {"id": "TER-D2", "fecha": "2026-06-10", "hora": "10:00", "responsable": "Fernando", "codigo": "T01", "sector": "Planta de efluentes", "idEquipo": "Soplador 1", "equipo": "Motor electrico", "componente": "", "carga": "", "temp": 34.5, "ref": "", "dt": "", "severidad": "Normal", "accion": "Sin acción", "estado": "", "obs": "", "foto": ""}, {"id": "TER-D3", "fecha": "2026-07-14", "hora": "10:00", "responsable": "Fernando", "codigo": "T01", "sector": "Planta de efluentes", "idEquipo": "Soplador 1", "equipo": "Motor electrico", "componente": "", "carga": "", "temp": 32.8, "ref": "", "dt": "", "severidad": "Normal", "accion": "Sin acción", "estado": "", "obs": "", "foto": ""}, {"id": "TER-D4", "fecha": "2026-08-12", "hora": "10:00", "responsable": "Fernando", "codigo": "T01", "sector": "Planta de efluentes", "idEquipo": "Soplador 1", "equipo": "Motor electrico", "componente": "", "carga": "", "temp": 33.9, "ref": "", "dt": "", "severidad": "Normal", "accion": "Sin acción", "estado": "", "obs": "", "foto": ""}, {"id": "TER-D5", "fecha": "2026-09-15", "hora": "10:00", "responsable": "Fernando", "codigo": "T01", "sector": "Planta de efluentes", "idEquipo": "Soplador 1", "equipo": "Motor electrico", "componente": "", "carga": "", "temp": 35.2, "ref": "", "dt": "", "severidad": "Normal", "accion": "Sin acción", "estado": "", "obs": "", "foto": ""}, {"id": "TER-D6", "fecha": "2026-10-14", "hora": "10:00", "responsable": "Fernando", "codigo": "T01", "sector": "Planta de efluentes", "idEquipo": "Soplador 1", "equipo": "Motor electrico", "componente": "", "carga": "", "temp": 34.0, "ref": "", "dt": "", "severidad": "Normal", "accion": "Sin acción", "estado": "", "obs": "", "foto": ""}, {"id": "TER-D7", "fecha": "2026-05-12", "hora": "10:00", "responsable": "Fernando", "codigo": "T02", "sector": "Planta de efluentes", "idEquipo": "Soplador 2", "equipo": "", "componente": "", "carga": "", "temp": 51.2, "ref": "", "dt": "", "severidad": "Normal", "accion": "Sin acción", "estado": "", "obs": "", "foto": ""}, {"id": "TER-D8", "fecha": "2026-06-10", "hora": "10:00", "responsable": "Fernando", "codigo": "T02", "sector": "Planta de efluentes", "idEquipo": "Soplador 2", "equipo": "", "componente": "", "carga": "", "temp": 53.0, "ref": "", "dt": "", "severidad": "Normal", "accion": "Sin acción", "estado": "", "obs": "", "foto": ""}, {"id": "TER-D9", "fecha": "2026-07-14", "hora": "10:00", "responsable": "Fernando", "codigo": "T02", "sector": "Planta de efluentes", "idEquipo": "Soplador 2", "equipo": "", "componente": "", "carga": "", "temp": 54.8, "ref": "", "dt": "", "severidad": "Normal", "accion": "Sin acción", "estado": "", "obs": "", "foto": ""}, {"id": "TER-D10", "fecha": "2026-08-12", "hora": "10:00", "responsable": "Fernando", "codigo": "T02", "sector": "Planta de efluentes", "idEquipo": "Soplador 2", "equipo": "", "componente": "", "carga": "", "temp": 57.5, "ref": "", "dt": "", "severidad": "Normal", "accion": "Sin acción", "estado": "", "obs": "", "foto": ""}, {"id": "TER-D11", "fecha": "2026-09-15", "hora": "10:00", "responsable": "Fernando", "codigo": "T02", "sector": "Planta de efluentes", "idEquipo": "Soplador 2", "equipo": "", "componente": "", "carga": "", "temp": 58.1, "ref": "", "dt": "", "severidad": "Normal", "accion": "Sin acción", "estado": "", "obs": "", "foto": ""}, {"id": "TER-D12", "fecha": "2026-10-14", "hora": "10:00", "responsable": "Fernando", "codigo": "T02", "sector": "Planta de efluentes", "idEquipo": "Soplador 2", "equipo": "", "componente": "", "carga": "", "temp": 62.6, "ref": "", "dt": "", "severidad": "Normal", "accion": "Sin acción", "estado": "", "obs": "", "foto": ""}, {"id": "TER-D13", "fecha": "2026-05-12", "hora": "10:00", "responsable": "Fernando", "codigo": "T09", "sector": "Sala de compresor de aire", "idEquipo": "Tablero de distribucion principal", "equipo": "PN°2", "componente": "", "carga": "", "temp": 44.0, "ref": "", "dt": "", "severidad": "Normal", "accion": "Sin acción", "estado": "", "obs": "", "foto": ""}, {"id": "TER-D14", "fecha": "2026-06-10", "hora": "10:00", "responsable": "Fernando", "codigo": "T09", "sector": "Sala de compresor de aire", "idEquipo": "Tablero de distribucion principal", "equipo": "PN°2", "componente": "", "carga": "", "temp": 43.2, "ref": "", "dt": "", "severidad": "Normal", "accion": "Sin acción", "estado": "", "obs": "", "foto": ""}, {"id": "TER-D15", "fecha": "2026-07-14", "hora": "10:00", "responsable": "Fernando", "codigo": "T09", "sector": "Sala de compresor de aire", "idEquipo": "Tablero de distribucion principal", "equipo": "PN°2", "componente": "", "carga": "", "temp": 45.1, "ref": "", "dt": "", "severidad": "Normal", "accion": "Sin acción", "estado": "", "obs": "", "foto": ""}, {"id": "TER-D16", "fecha": "2026-08-12", "hora": "10:00", "responsable": "Fernando", "codigo": "T09", "sector": "Sala de compresor de aire", "idEquipo": "Tablero de distribucion principal", "equipo": "PN°2", "componente": "", "carga": "", "temp": 44.6, "ref": "", "dt": "", "severidad": "Normal", "accion": "Sin acción", "estado": "", "obs": "", "foto": ""}, {"id": "TER-D17", "fecha": "2026-09-15", "hora": "10:00", "responsable": "Fernando", "codigo": "T09", "sector": "Sala de compresor de aire", "idEquipo": "Tablero de distribucion principal", "equipo": "PN°2", "componente": "", "carga": "", "temp": 46.0, "ref": "", "dt": "", "severidad": "Normal", "accion": "Sin acción", "estado": "", "obs": "", "foto": ""}, {"id": "TER-D18", "fecha": "2026-10-14", "hora": "10:00", "responsable": "Fernando", "codigo": "T09", "sector": "Sala de compresor de aire", "idEquipo": "Tablero de distribucion principal", "equipo": "PN°2", "componente": "", "carga": "", "temp": 48.2, "ref": "", "dt": "", "severidad": "Moderada", "accion": "Programar revisión y ajuste", "estado": "Programado", "obs": "", "foto": ""}, {"id": "TER-D19", "fecha": "2026-07-14", "hora": "10:00", "responsable": "Fernando", "codigo": "T03", "sector": "Planta de efluentes", "idEquipo": "Soplador 3", "equipo": "", "componente": "", "carga": "", "temp": 39.5, "ref": "", "dt": "", "severidad": "Normal", "accion": "Sin acción", "estado": "", "obs": "", "foto": ""}, {"id": "TER-D20", "fecha": "2026-08-12", "hora": "10:00", "responsable": "Fernando", "codigo": "T03", "sector": "Planta de efluentes", "idEquipo": "Soplador 3", "equipo": "", "componente": "", "carga": "", "temp": 40.1, "ref": "", "dt": "", "severidad": "Normal", "accion": "Sin acción", "estado": "", "obs": "", "foto": ""}, {"id": "TER-D21", "fecha": "2026-09-15", "hora": "10:00", "responsable": "Fernando", "codigo": "T03", "sector": "Planta de efluentes", "idEquipo": "Soplador 3", "equipo": "", "componente": "", "carga": "", "temp": 38.7, "ref": "", "dt": "", "severidad": "Normal", "accion": "Sin acción", "estado": "", "obs": "", "foto": ""}, {"id": "TER-D22", "fecha": "2026-10-14", "hora": "10:00", "responsable": "Fernando", "codigo": "T03", "sector": "Planta de efluentes", "idEquipo": "Soplador 3", "equipo": "", "componente": "", "carga": "", "temp": 39.9, "ref": "", "dt": "", "severidad": "Normal", "accion": "Sin acción", "estado": "", "obs": "", "foto": ""}];
+function demoHist(){let h={};try{h=JSON.parse(localStorage.getItem('mant_demo')||'{}')}catch(e){}
+  return{checks:h.checks||[],termo:h.termo||DEMO_TERMO.map(t=>({...t})),consumos:h.consumos||[]}}
+function demoSave(h){try{localStorage.setItem('mant_demo',JSON.stringify(h))}catch(e){}}
+
+/* ====== Cálculos RE-MAN-04 (iguales a Code.gs) ====== */
+const CALCULOS=[['C_P1','Pozo 1'],['C_P2','Pozo 2'],['C_P3','Pozo 3'],['C_TOTAL','Total pozos'],['C_ALIM','Alimentación cuadro de bombeo'],['C_OSM','Consumo ósmosis'],['C_ABL','Agua cruda ablandadores']];
+function num(v){if(v===null||v===undefined||v==='')return null;if(typeof v==='number')return v;const n=Number(String(v).replace(',','.').trim());return isNaN(n)?null:n;}
+function calcular(act,prev){
+  const d=k=>(num(act[k])!==null&&num(prev[k]))?num(act[k])-num(prev[k]):null;
+  const r={C_P1:d('P1_M3'),C_P2:d('P2_M3'),C_P3:d('P3_M3')};
+  const p=[r.C_P1,r.C_P2,r.C_P3].filter(v=>v!==null); r.C_TOTAL=p.length?p.reduce((a,b)=>a+b,0):null;
+  const cb=d('CB_CAUD'); r.C_ALIM=cb===null?null:cb*10; r.C_OSM=r.C_ALIM===null?null:r.C_ALIM*2;
+  r.C_ABL=(r.C_TOTAL===null||r.C_OSM===null)?null:r.C_TOTAL-r.C_OSM;
+  Object.keys(r).forEach(k=>{if(r[k]!==null)r[k]=Math.round(r[k]*100)/100;}); return r;
+}
+const fmtN=v=>v===null||v===undefined||v===''?'—':Number(v).toLocaleString('es-AR',{maximumFractionDigits:2});
+const FALLAS=['NO OK','NO','ROJO','Fuera de rango','Revisar'];
+const esFalla=e=>FALLAS.includes(e);
+
+/* ====== API ====== */
+async function apiGet(action, params={}){
+  if(!API_URL){ return action==='config' ? DEMO_CFG : demoHist(); }
+  const q = new URLSearchParams({action,...params});
+  const r = await fetch(API_URL+'?'+q); const j = await r.json();
+  if(!j.ok) throw new Error(j.error); return j.data;
+}
+async function apiPost(body){
+  if(!API_URL){
+    const h = demoHist(); const id=(body.action==='guardarCheck'?'CHK-':'TER-')+Date.now(); let calc=null;
+    if(body.action==='guardarCheck'){
+      body.items.forEach(i=>h.checks.push({id,fecha:body.fecha,hora:body.hora,tipo:body.tipo,semana:semanaISO(body.fecha),responsable:body.responsable,...i}));
+      if(body.tipo==='Diario'){ const act={}; body.items.forEach(i=>act[i.codigo]=i.valor!==''&&i.valor!=null?i.valor:i.estado);
+        calc=calcular(act,DEMO_CFG.ultimas); h.consumos.push({id,fecha:body.fecha,hora:body.hora,responsable:body.responsable,...calc});
+        body.items.forEach(i=>{if(num(i.valor)!==null)DEMO_CFG.ultimas[i.codigo]=num(i.valor);}); DEMO_CFG.ultimaFecha=body.fecha; }
+    } else if(body.action==='actualizarTermo'){ const t=h.termo.find(x=>x.id===body.id); if(t) t.estado=body.estado; }
+    else if(body.action==='leerTemp'){ return {valor:null}; }
+    else h.termo.push({...body,id,foto:body.foto?'(foto local)':''});
+    demoSave(h); return {id,calc};
+  }
+  const r = await fetch(API_URL,{method:'POST',headers:{'Content-Type':'text/plain;charset=utf-8'},body:JSON.stringify(body)});
+  const j = await r.json(); if(!j.ok) throw new Error(j.error); return j.data;
+}
+async function cargar(){
+  try{ CFG = await apiGet('config'); CFG.puntos=CFG.puntos.filter(p=>!(CFG.sectoresOcultos||[]).includes(p.sector)); HIST = await apiGet('historial',{dias:60}); }
+  catch(e){ $('#app').innerHTML='<div class="card">No se pudo conectar con la planilla.<br><small>'+esc(e.message)+'</small><button class="btn" onclick="cargar().then(()=>ir(\'inicio\'))">Reintentar</button></div>'; throw e; }
+}
+
+
+/* ====== ¿Quién sos? (al entrar a cada sección) ====== */
+const NOMBRE_SEC={check:a=>'el check '+a.toLowerCase(),termo:()=>'el control termográfico'};
+function vQuien(v,arg){
+  $('#volver').classList.remove('oculto'); $('#volver').setAttribute('onclick',"ir('inicio')"); window.scrollTo(0,0);
+  $('#titulo').textContent=v==='termo'?'Control termográfico':'Check '+String(arg).toLowerCase();
+  $('#app').innerHTML=`<h2>¿Quién realiza ${NOMBRE_SEC[v](arg)}?</h2>
+    <div class="nombres">${CFG.responsables.map((r,i)=>`<button onclick="elegirQuien(${i},'${v}','${arg||''}')">${esc(r)}</button>`).join('')}
+      <button onclick="$('#otro-box').classList.remove('oculto');$('#otro-nom').focus()">Otro</button></div>
+    <div id="otro-box" class="card oculto" style="margin-top:14px"><label>Nombre y apellido</label><input type="text" id="otro-nom" autocomplete="off">
+      <button class="btn" onclick="elegirOtro('${v}','${arg||''}')">Continuar</button></div>`;
+}
+function elegirQuien(i,v,arg){ USER=CFG.responsables[i]; ir(v,arg||undefined); }
+function elegirOtro(v,arg){ const n=$('#otro-nom').value.trim(); if(!n) return toast('Escribí el nombre'); USER=n; ir(v,arg||undefined); }
+function selQuien(){
+  const lista=CFG.responsables.includes(USER)?CFG.responsables:CFG.responsables.concat([USER]);
+  return `<div class="quien">👤 Responsable: <select onchange="if(this.value==='__otro'){const n=(prompt('Nombre y apellido')||'').trim(); if(n){USER=n; this.insertAdjacentHTML('beforeend','<option selected>'+esc(n)+'</option>');} else this.value=USER;} else USER=this.value">${lista.map(r=>`<option ${r===USER?'selected':''}>${esc(r)}</option>`).join('')}<option value="__otro">Otro…</option></select></div>`;
+}
+
+/* ====== Navegación ====== */
+function ir(v, arg){
+  if(v==='inicio'||v==='historial') USER='';
+  if((v==='check'||v==='termo')&&!USER) return vQuien(v,arg);
+  $('#volver').classList.toggle('oculto', v==='inicio'); $('#volver').setAttribute('onclick',"ir('inicio')");
+  window.scrollTo(0,0);
+  ({inicio:vInicio, check:vCheck, termo:vTermo, historial:vHist})[v](arg);
+}
+
+/* ====== Inicio ====== */
+function vInicio(){
+  $('#titulo').textContent='MantCOOP';
+  const f=hoy(), sem=semanaISO(f);
+  const diario = HIST.checks.filter(c=>c.tipo==='Diario'&&c.fecha===f);
+  const semanal = HIST.checks.filter(c=>c.tipo==='Semanal'&&semanaISO(c.fecha)===sem);
+  const resp = l => [...new Set(l.map(x=>x.responsable))].join(', ');
+  const fallas = l => l.filter(x=>esFalla(x.estado)).length;
+  const pill = (l) => l.length ? `<span class="pill ${fallas(l)?'p-warn':'p-ok'}">Hecho${fallas(l)?' · '+fallas(l)+' a revisar':''}</span>` : '<span class="pill p-bad">Pendiente</span>';
+  const uc=[...(HIST.consumos||[])].sort((a,b)=>(b.fecha+b.hora).localeCompare(a.fecha+a.hora))[0];
+  $('#app').innerHTML = `
+    <h2>MantCOOP</h2><div class="hist meta" style="text-align:center;margin:-10px 0 8px">Mantenimiento COOPAGRO</div>
+    <div class="circulos">
+      <div class="circulo" onclick="ir('check','Diario')"><span>📋</span>Check<br>diario</div>
+      <div class="circulo" onclick="ir('check','Semanal')"><span>🗓️</span>Check<br>semanal</div>
+      <div class="circulo" onclick="ir('termo')"><span>🌡️</span>Control<br>termográfico</div>
+      <div class="circulo" onclick="ir('historial')"><span>📚</span>Historial</div>
+    </div>
+    <div class="card"><div class="estado-row"><div><b>Check diario de hoy</b><div class="hist meta">${diario.length?esc(resp(diario)):fFecha(f)}</div></div>${pill(diario)}</div></div>
+    ${uc?`<div class="card"><b>Consumo de agua</b> <span class="hist meta">· ${fFecha(uc.fecha)}</span>${consumosHTML(uc)}</div>`:''}
+    <div class="card"><div class="estado-row"><div><b>Check semanal</b><div class="hist meta">Semana ${sem.split('-S')[1]}${semanal.length?' · '+esc(resp(semanal)):''}</div></div>${pill(semanal)}</div></div>
+    <div class="card" onclick="ir('termo')" style="cursor:pointer"><div class="estado-row"><div><b>Control termográfico</b><div class="hist meta">${(()=>{const pe=CFG.puntos.filter(p=>estadoPunto(p).pend).length;return pe?pe+' punto'+(pe>1?'s':'')+' pendiente'+(pe>1?'s':'')+' de '+CFG.puntos.length:'Todos los puntos al día';})()}</div></div>
+      ${(()=>{const ab=HIST.termo.filter(t=>t.severidad&&requiereSeg(t.severidad)&&t.estado&&t.estado!=='Cerrado');return ab.length?`<span class="pill ${ab.some(t=>esMax(t.severidad))?'p-bad':'p-warn'}">${ab.length} hallazgo${ab.length>1?'s':''} abierto${ab.length>1?'s':''}</span>`:'<span class="pill p-ok">Sin hallazgos</span>';})()}</div></div>`;
+}
+function consumosHTML(c){
+  return `<div class="consumos">${CALCULOS.map(([k,l])=>`<div class="${k==='C_TOTAL'?'tot':''}"><span>${l}</span><b>${fmtN(c[k])} m³</b></div>`).join('')}</div>`;
+}
+
+/* ====== Check diario / semanal ====== */
+function opciones(it){ return it.respuesta==='Número'?null:it.respuesta.split('/').map(s=>s.trim()); }
+function claseOp(o){ return esFalla(o)?'falla':(o==='OFF'?'na':'ok'); }
+function vCheck(tipo){
+  $('#titulo').textContent='Check '+tipo.toLowerCase();
+  const items = CFG.checklist.filter(c=>c.tipo.toLowerCase()===tipo.toLowerCase());
+  BORRADOR = {tipo, items: items.map(i=>({...i, estado:'', valor:'', obs:'', verObs:false}))};
+  if(!items.length){ $('#app').innerHTML=`<div class="vacio">No hay ítems cargados para el check ${tipo.toLowerCase()}.<br>Agregalos en la hoja <b>Checklist</b> de la planilla.</div>`; return; }
+  const grupos = []; // sectores en el orden del Forms
+  BORRADOR.items.forEach((it,i)=>{ const g=grupos[grupos.length-1]; if(g&&g.s===it.sector) g.i.push(i); else grupos.push({s:it.sector,i:[i]}); });
+  $('#app').innerHTML = `
+    <h2>Check ${tipo.toLowerCase()}</h2>
+    <div class="card">
+      ${selQuien()}
+      <div class="fila2"><div><label>Fecha</label><input type="date" id="c-fecha"></div>
+      <div><label>Hora</label><input type="time" id="c-hora"></div></div>
+      <div class="hist meta" style="margin-top:6px">Si dejás fecha y hora vacías, se completan solas al guardar.</div>
+      ${tipo==='Diario'&&CFG.ultimaFecha?`<div class="hist meta" style="margin-top:8px">Lecturas anteriores del ${fFecha(CFG.ultimaFecha)}</div>`:''}
+    </div>
+    <div class="progreso"><span id="prog-t"></span><div class="barra"><div id="prog-b"></div></div></div>
+    ${grupos.map(g=>`<div class="grupo"><h3>${esc(g.s)}</h3>${g.i.map(i=>itemHTML(i)).join('')}</div>`).join('')}
+    ${tipo==='Diario'?`<div class="card" id="c-calc"></div>`:''}
+    <button class="btn" id="c-guardar" onclick="guardarCheck()">Guardar check</button>`;
+  progreso(); calcVivo();
+}
+function itemHTML(i){
+  const it=BORRADOR.items[i], ops=opciones(it);
+  const cls=!it.estado?'':(esFalla(it.estado)?'falla':it.estado==='OFF'?'na':'ok');
+  const pideObs=esFalla(it.estado);
+  let cuerpo='';
+  if(ops){
+    cuerpo=`<div class="btns">${ops.map(o=>`<button class="${it.estado===o?'s-'+claseOp(o):''}" onclick="marcar(${i},'${o}')">${o}</button>`).join('')}</div>`;
+  } else {
+    const ant=CFG.ultimas&&CFG.ultimas[it.codigo];
+    const v=num(it.valor); let info=[];
+    if(it.acum&&ant!==undefined) info.push('Anterior: '+fmtN(ant)+(v!==null?` · Diferencia: <b>${fmtN(Math.round((v-ant)*100)/100)}</b>`:''));
+    if(it.min!==null||it.max!==null) info.push('Rango: '+(it.min!==null?'≥ '+fmtN(it.min)+' ':'')+(it.max!==null?'≤ '+fmtN(it.max):''));
+    cuerpo=`<div class="numrow"><input type="text" inputmode="decimal" placeholder="Valor" value="${esc(it.valor)}" oninput="valor(${i},this.value)"><span class="unidad">${esc(it.unidad)}</span></div>
+      <div class="c" id="inf${i}">${info.join(' · ')}</div>
+      ${it.estado==='Revisar'?'<div class="aviso">La lectura es menor que la anterior. Revisá el número o explicá el motivo.</div>':''}
+      ${it.estado==='Fuera de rango'?'<div class="aviso">Valor fuera de rango. Indicá la acción tomada.</div>':''}`;
+  }
+  const verObs=pideObs||it.verObs||it.obs;
+  return `<div class="item ${cls}" id="it${i}"><div class="t">${esc(it.equipo)}</div><div class="tarea">${esc(it.tarea)}</div>
+    ${it.ref?`<div class="c">ℹ ${esc(it.ref)}</div>`:''}${cuerpo}
+    ${verObs?`<textarea placeholder="${pideObs?'Describí qué pasa / acción tomada (obligatorio)':'Observación'}" oninput="BORRADOR.items[${i}].obs=this.value">${esc(it.obs)}</textarea>`
+      :`<button class="link" onclick="BORRADOR.items[${i}].verObs=true;redib(${i})">+ observación</button>`}</div>`;
+}
+function redib(i){ $('#it'+i).outerHTML=itemHTML(i); }
+function marcar(i,e){ BORRADOR.items[i].estado=e; redib(i); progreso(); if(esFalla(e)) $('#it'+i+' textarea').focus(); }
+function valor(i,txt){
+  const it=BORRADOR.items[i]; it.valor=txt; const v=num(txt), ant=CFG.ultimas&&CFG.ultimas[it.codigo];
+  const prev=it.estado;
+  if(txt.trim()==='') it.estado='';
+  else if(v===null) it.estado='';
+  else if((it.min!==null&&v<it.min)||(it.max!==null&&v>it.max)) it.estado='Fuera de rango';
+  else if(it.acum&&ant!==undefined&&v<ant) it.estado='Revisar';
+  else it.estado='OK';
+  if(prev!==it.estado){ const pos=document.activeElement&&document.activeElement.selectionStart; redib(i);
+    const inp=$('#it'+i+' input'); inp.focus(); try{inp.setSelectionRange(pos,pos)}catch(e){} }
+  else { // solo actualizar el texto de diferencia
+    const tmp=document.createElement('div'); tmp.innerHTML=itemHTML(i); $('#inf'+i).innerHTML=tmp.querySelector('#inf'+i).innerHTML; }
+  progreso(); calcVivo();
+}
+function calcVivo(){
+  const el=$('#c-calc'); if(!el) return;
+  const act={}; BORRADOR.items.forEach(x=>act[x.codigo]=x.valor);
+  el.innerHTML='<b>Consumos calculados</b> <span class="hist meta">· desde el check anterior</span>'+consumosHTML(calcular(act,CFG.ultimas||{}));
+}
+function progreso(){ const n=BORRADOR.items.length, h=BORRADOR.items.filter(x=>x.estado).length;
+  $('#prog-t').textContent=`${h} de ${n} ítems controlados`; $('#prog-b').style.width=(100*h/n)+'%'; }
+async function guardarCheck(){
+  const resp=USER, fecha=$('#c-fecha').value||hoy(), hora=$('#c-hora').value||horaAhora();
+  if(!resp) return toast('Elegí el responsable');
+  const sin = BORRADOR.items.findIndex(x=>!x.estado);
+  if(sin>=0){ $('#it'+sin).scrollIntoView({behavior:'smooth',block:'center'}); return toast('Falta completar ítems'); }
+  const sinObs = BORRADOR.items.findIndex(x=>esFalla(x.estado)&&!x.obs.trim());
+  if(sinObs>=0){ $('#it'+sinObs).scrollIntoView({behavior:'smooth',block:'center'}); return toast('Completá la observación del ítem marcado'); }
+  const b=$('#c-guardar'); b.disabled=true; b.textContent='Guardando…';
+  try{
+    const r=await apiPost({action:'guardarCheck',tipo:BORRADOR.tipo,responsable:resp,fecha,hora,
+      items:BORRADOR.items.map(x=>({codigo:x.codigo,sector:x.sector,equipo:x.equipo,tarea:x.tarea,estado:x.estado,valor:x.respuesta==='Número'?num(x.valor):'',obs:x.obs.trim()}))});
+    const nf=BORRADOR.items.filter(x=>esFalla(x.estado)).length;
+    toast('Check guardado'+(nf?` · ${nf} ítem${nf>1?'s':''} a revisar`:''));
+    if(API_URL) CFG = await apiGet('config');
+    HIST = await apiGet('historial',{dias:60}); ir('inicio');
+  }catch(e){ toast('Error al guardar: '+e.message,5000); b.disabled=false; b.textContent='Guardar check'; }
+}
+
+/* ====== Control termográfico (ronda mensual) ====== */
+// Severidad según ΔT = Temp. medida − Temp. referencia (por defecto, la del mes anterior)
+// Criterios de severidad: se definen en la hoja "Termografia_Criterios" de la planilla
+const CRITERIOS_DEF=[{severidad:'Normal',desde:null,hasta:5,accion:'Sin acción',seguimiento:false},{severidad:'Moderada',desde:5,hasta:15,accion:'Programar revisión y ajuste',seguimiento:true},{severidad:'Urgente',desde:15,hasta:null,accion:'Ajuste y limpieza inmediata',seguimiento:true}];
+function criterios(){ const c=(CFG&&CFG.criterios&&CFG.criterios.length)?CFG.criterios:CRITERIOS_DEF; return c; }
+function critDe(n){ return criterios().find(c=>c.severidad===n); }
+function requiereSeg(n){ const c=critDe(n); return c?!!c.seguimiento:false; }
+function esMax(n){ const c=criterios(); return c.length>1&&c[c.length-1].severidad===n; }
+function pillSev(n){ const c=criterios(), i=c.findIndex(x=>x.severidad===n); if(i<0) return 'p-gris'; return i===0?'p-ok':i===c.length-1?'p-bad':'p-warn'; }
+function colSev(n){ return {'p-ok':'#2e7d4f','p-warn':'#d08a10','p-bad':'#c0392b'}[pillSev(n)]||'#1f5c3a'; }
+const ESTADOS_T=['Pendiente','Programado','Cerrado'];
+const MESES=['enero','febrero','marzo','abril','mayo','junio','julio','agosto','septiembre','octubre','noviembre','diciembre'];
+const mesDe=f=>String(f).slice(0,7);
+const nombreMes=m=>MESES[Number(m.slice(5,7))-1]+' '+m.slice(0,4);
+const nombrePunto=p=>{const i=p.idEquipo!==undefined?p.idEquipo:p.id;return [i,p.equipo&&p.equipo!==i?p.equipo:'',p.componente].filter(Boolean).join(' · ');};
+const termoDe=c=>[...HIST.termo].filter(t=>t.codigo===c).sort((a,b)=>(b.fecha+b.hora).localeCompare(a.fecha+a.hora));
+const previoA=(c,mes)=>termoDe(c).find(t=>mesDe(t.fecha)<mes);
+const delMes=(c,mes)=>termoDe(c).find(t=>mesDe(t.fecha)===mes);
+function sevDe(dt){ if(dt===null||isNaN(dt)) return null; const c=criterios().find(x=>x.hasta===null||x.hasta===''||dt<=x.hasta)||criterios()[criterios().length-1]; return {n:c.severidad,acc:c.accion}; }
+function thumb(url){ const m=String(url||'').match(/\/d\/([\w-]+)/)||String(url||'').match(/id=([\w-]+)/); return m?'https://drive.google.com/thumbnail?id='+m[1]+'&sz=w600':null; }
+
+
+/* Gráfico temperatura vs tiempo (SVG, sin librerías) */
+const MES_C=['ene','feb','mar','abr','may','jun','jul','ago','sep','oct','nov','dic'];
+function serieDe(c){ return termoDe(c).filter(t=>num(t.temp)!==null).reverse(); } // de más vieja a más nueva
+function graficoTemp(serie, actual){
+  const pts=serie.map(t=>({f:t.fecha,v:num(t.temp),sev:t.severidad}));
+  if(actual!==null&&actual!==undefined) pts.push({f:hoy(),v:actual,sev:null,hoy:true});
+  if(!pts.length) return '<div class="hist meta" style="padding:10px 0">Todavía no hay mediciones para graficar.</div>';
+  const W=340,H=180,L=34,R=12,T=14,B=30;
+  const vs=pts.map(p=>p.v); let lo=Math.min(...vs), hi=Math.max(...vs); const pad=Math.max(2,(hi-lo)*.15); lo=Math.floor(lo-pad); hi=Math.ceil(hi+pad);
+  const n=pts.length, x=i=>n===1?(L+W-R)/2:L+i*(W-L-R)/(n-1), y=v=>T+(hi-v)*(H-T-B)/(hi-lo);
+  let g='';
+  for(let k=0;k<=4;k++){ const v=lo+(hi-lo)*k/4, yy=y(v); g+=`<line x1="${L}" x2="${W-R}" y1="${yy}" y2="${yy}" stroke="#ece4cc"/><text x="${L-5}" y="${yy+4}" text-anchor="end" font-size="10" fill="#6b7568">${Math.round(v)}</text>`; }
+  const real=pts.filter(p=>!p.hoy);
+  if(real.length>1) g+=`<polyline fill="none" stroke="#1f5c3a" stroke-width="2.2" points="${real.map((p,i)=>x(i)+','+y(p.v)).join(' ')}"/>`;
+  if(pts[n-1].hoy&&n>1) g+=`<line x1="${x(n-2)}" y1="${y(pts[n-2].v)}" x2="${x(n-1)}" y2="${y(pts[n-1].v)}" stroke="#1f5c3a" stroke-width="2" stroke-dasharray="4 4"/>`;
+  const paso=Math.ceil(n/7);
+  pts.forEach((p,i)=>{ const cx=x(i), cy=y(p.v);
+    g+=p.hoy?`<circle cx="${cx}" cy="${cy}" r="5.5" fill="#fff" stroke="#1f5c3a" stroke-width="2.5"/>`
+            :`<circle cx="${cx}" cy="${cy}" r="4.5" fill="${colSev(p.sev)}" stroke="#fff" stroke-width="1.5"/>`;
+    if(i===n-1||i===n-2&&!pts[n-1].hoy) g+=`<text x="${Math.min(cx,W-R-2)}" y="${cy-9}" text-anchor="${i===n-1&&n>1?'end':'middle'}" font-size="11" font-weight="700" fill="#1d2a22">${fmtN(p.v)}°</text>`;
+    if(i%paso===0||i===n-1) g+=`<text x="${cx}" y="${H-10}" text-anchor="middle" font-size="10" fill="#6b7568">${p.hoy?'hoy':MES_C[Number(p.f.slice(5,7))-1]+' '+p.f.slice(2,4)}</text>`;
+  });
+  return `<svg viewBox="0 0 ${W} ${H}" class="graf" role="img" aria-label="Temperatura vs tiempo">${g}</svg>`;
+}
+function miniGraf(serie){
+  const v=serie.map(t=>num(t.temp)); if(v.length<2) return '';
+  const W=70,H=26, mn=Math.min(...v), mx=Math.max(...v), r=Math.max(mx-mn,10), lo=(mn+mx)/2-r/2, x=i=>2+i*(W-4)/(v.length-1), y=a=>H-3-(a-lo)*(H-6)/r;
+  const last=serie[serie.length-1];
+  return `<svg viewBox="0 0 ${W} ${H}" class="mini"><polyline fill="none" stroke="#1f5c3a" stroke-width="1.8" points="${v.map((a,i)=>x(i)+','+y(a)).join(' ')}"/><circle cx="${x(v.length-1)}" cy="${y(v[v.length-1])}" r="2.8" fill="${colSev(last.severidad)}"/></svg>`;
+}
+
+/* Sectores y frecuencia (hoja "Termografia_Sectores") */
+const FREQ_TXT={1:'Mensual',2:'Bimestral',3:'Trimestral',4:'Cuatrimestral',6:'Semestral',12:'Anual'};
+function sectoresT(){
+  const def=(CFG.sectores&&CFG.sectores.length)?CFG.sectores:[];
+  const lista=def.map(s=>({sector:s.sector,frecuencia:Number(s.frecuencia)||1}));
+  CFG.puntos.forEach(p=>{ if(!lista.some(s=>s.sector===p.sector)) lista.push({sector:p.sector,frecuencia:1}); });
+  return lista.filter(s=>CFG.puntos.some(p=>p.sector===s.sector));
+}
+const freqDe=sec=>(sectoresT().find(s=>s.sector===sec)||{frecuencia:1}).frecuencia;
+const freqTxt=n=>FREQ_TXT[n]||('Cada '+n+' meses');
+function sumarMeses(m,n){ let y=Number(m.slice(0,4)), mm=Number(m.slice(5,7))-1+n; y+=Math.floor(mm/12); mm=((mm%12)+12)%12; return y+'-'+String(mm+1).padStart(2,'0'); }
+// estado de un punto según la frecuencia de su sector
+function estadoPunto(p){
+  const mes=mesDe(hoy()), ult=termoDe(p.codigo)[0], f=freqDe(p.sector);
+  if(!ult) return {pend:true,ult:null,prox:mes,txt:'Pendiente (sin mediciones)'};
+  const prox=sumarMeses(mesDe(ult.fecha),f);
+  if(prox<=mes) return {pend:true,ult,prox,txt:'Pendiente · '+(prox<mes?'vencido desde '+nombreMes(prox):'vence este mes')};
+  return {pend:false,ult,prox,txt:'Medido '+fFecha(ult.fecha)+' · '+fmtN(ult.temp)+' °C · próximo: '+nombreMes(prox)};
+}
+
+function vTermo(){
+  $('#titulo').textContent='Control termográfico';
+  const mes=mesDe(hoy()), pts=CFG.puntos, est=pts.map(p=>estadoPunto(p)), pend=est.filter(e=>e.pend).length;
+  const abiertos=[...HIST.termo].filter(t=>t.severidad&&requiereSeg(t.severidad)&&t.estado&&t.estado!=='Cerrado')
+    .sort((a,b)=>(b.fecha+b.hora).localeCompare(a.fecha+a.hora));
+  $('#app').innerHTML=`
+    <h2>Control termográfico</h2>
+    <div class="card"><div class="estado-row"><div><b>${nombreMes(mes).replace(/^./,c=>c.toUpperCase())}</b><div class="hist meta">${pts.length-pend} de ${pts.length} puntos al día</div></div>
+      <span class="pill ${pend?'p-warn':'p-ok'}">${pend?pend+' pendiente'+(pend>1?'s':''):'Todo al día'}</span></div>
+      <div class="barra" style="margin-top:10px"><div style="width:${100*(pts.length-pend)/(pts.length||1)}%"></div></div></div>
+    ${abiertos.length?`<div class="grupo"><h3>Hallazgos abiertos</h3>${abiertos.map(t=>`<div class="item ${esMax(t.severidad)?'falla':'warnb'}">
+      <div class="estado-row"><div><div class="t">${esc(nombrePunto(t))}</div><div class="c">${esc(t.sector)} · ${fFecha(t.fecha)} · ${fmtN(t.temp)} °C${num(t.dt)!==null?' (ΔT '+(num(t.dt)>0?'+':'')+fmtN(t.dt)+' °C)':''}</div></div>
+      <span class="pill ${pillSev(t.severidad)}">${esc(t.severidad)}</span></div>
+      ${t.accion?`<div class="tarea" style="margin-top:6px">${esc(t.accion)}</div>`:''}
+      <div class="btns">${ESTADOS_T.map(e=>`<button class="${t.estado===e?(e==='Cerrado'?'s-ok':e==='Programado'?'s-na':'s-falla'):''}" onclick="cambiarEstadoT('${esc(t.id)}','${e}')">${e}</button>`).join('')}</div></div>`).join('')}</div>`:''}
+    <div class="grupo"><h3>Sectores</h3></div>
+    <div class="circulos sect">${sectoresT().map(s=>{const ps=pts.filter(p=>p.sector===s.sector), pe=ps.filter(p=>estadoPunto(p).pend).length,
+      urg=ps.some(p=>{const t=termoDe(p.codigo)[0];return t&&esMax(t.severidad)&&t.estado!=='Cerrado';});
+      return `<div class="circulo chico ${pe?'':'completo'}" onclick="vSector('${esc(s.sector)}')"><span class="nombre">${esc(s.sector)}</span>
+        <span class="frec">${freqTxt(s.frecuencia)}</span><span class="cuenta ${urg?'urg':''}">${pe?pe+' pend.':'✓ al día'}</span></div>`;}).join('')}</div>`;
+}
+function vSector(sec){
+  const pts=CFG.puntos.filter(p=>p.sector===sec), pe=pts.filter(p=>estadoPunto(p).pend).length;
+  $('#titulo').textContent='Control termográfico'; $('#volver').classList.remove('oculto'); $('#volver').setAttribute('onclick',"ir('termo')"); window.scrollTo(0,0);
+  $('#app').innerHTML=`<h2 style="margin-bottom:4px">${esc(sec)}</h2>
+    <div class="hist meta" style="text-align:center;margin-bottom:14px">Control ${freqTxt(freqDe(sec)).toLowerCase()} · ${pe?pe+' de '+pts.length+' pendientes':'todos al día'}</div>
+    ${pts.map(p=>{const e=estadoPunto(p), t=e.ult;
+      return `<div class="punto ${e.pend?'pend':''}" onclick="vPunto('${p.codigo}')"><div><div class="t">${esc(nombrePunto(p))}</div>
+        <div class="c">${e.txt}</div></div>
+        <div class="der">${miniGraf(serieDe(p.codigo))}${!e.pend&&t?`<span class="pill ${pillSev(t.severidad)}">${esc(t.severidad||'—')}</span>`:'<span class="flecha">›</span>'}</div></div>`;}).join('')}`;
+}
+
+async function cambiarEstadoT(id,estado){
+  const resp=USER; if(!resp) return toast('Elegí el responsable');
+  try{ await apiPost({action:'actualizarTermo',id,estado,responsable:resp}); HIST=await apiGet('historial',{dias:60}); toast('Estado: '+estado); vTermo(); }
+  catch(e){ toast('Error: '+e.message,5000); }
+}
+
+let TP=null; // medición en curso
+function vPunto(codigo){
+  const p=CFG.puntos.find(x=>x.codigo===codigo), mes=mesDe(hoy()), prev=termoDe(codigo)[0], ya=estadoPunto(p).pend?null:prev;
+  TP={p,prev,foto:null,img:null,manual:false};
+  $('#titulo').textContent='Control termográfico'; $('#volver').setAttribute('onclick',"vSector('"+p.sector.replace(/'/g,"\\'")+"')"); window.scrollTo(0,0);
+  const th=prev&&thumb(prev.foto);
+  $('#app').innerHTML=`
+    <h2 style="margin-bottom:4px">${esc(nombrePunto(p))}</h2><div class="hist meta" style="text-align:center;margin-bottom:14px">${esc(p.sector)}</div>
+    ${ya?`<div class="aviso" style="margin-bottom:12px">Este punto está al día (${fFecha(ya.fecha)}: ${fmtN(ya.temp)} °C · próximo control: ${nombreMes(estadoPunto(p).prox)}). Si guardás, se agrega otra medición.</div>`:''}
+    <div class="card"><b>Medición anterior</b>
+      ${prev?`<div class="prev"><div>${th?`<img src="${th}" alt="" onerror="this.remove()">`:''}</div><div>
+        <div class="hist meta">${fFecha(prev.fecha)} · ${esc(prev.responsable)}</div><div class="grande">${fmtN(prev.temp)} °C</div>
+        <span class="pill ${pillSev(prev.severidad)}">${esc(prev.severidad||'—')}</span>
+        ${prev.foto&&String(prev.foto).startsWith('http')?`<div><a href="${esc(prev.foto)}" target="_blank">Ver foto</a></div>`:''}</div></div>`
+      :'<div class="hist meta" style="margin-top:6px">Sin medición anterior para este punto.</div>'}</div>
+    <div class="card">
+      <button class="btn foto" onclick="$('#t-foto').click()">📷 Sacar foto del display</button>
+      <input type="file" accept="image/*" capture="environment" id="t-foto" class="oculto" onchange="tFoto(this)">
+      <div id="t-fotobox" class="oculto"><img id="t-prev" class="foto-prev" style="display:block" alt="" onclick="tocarFoto(event)">
+        <div class="hist meta" style="margin-top:4px">Si la lectura no es correcta, tocá sobre el número en la foto.</div></div>
+      <div id="t-ocr" class="ocr oculto"><img id="t-zoom" alt=""><span id="t-ocrtxt"></span></div>
+    </div>
+    <div class="card"><b>Temperatura en el tiempo</b> <span class="hist meta">· ${serieDe(codigo).length} ${serieDe(codigo).length===1?'medición':'mediciones'}</span>
+      <div id="t-graf">${graficoTemp(serieDe(codigo),null)}</div>
+      <div class="leyenda">${criterios().map(c=>`<span><i style="background:${colSev(c.severidad)}"></i>${esc(c.severidad)}</span>`).join('')}<span><i class="hoyi"></i>Hoy</span></div></div>
+    <div class="card">
+      <div class="fila2">
+        <div><label>Temp. medida (°C)</label><input type="text" inputmode="decimal" id="t-temp" oninput="TP.manual=true;tCalc()"></div>
+        <div><label>Temp. referencia (°C)</label><input type="text" inputmode="decimal" id="t-ref" value="${prev?esc(String(prev.temp).replace(".",",")):''}" oninput="tCalc()"></div>
+      </div>
+      <div class="hist meta" style="margin-top:4px">${prev?'Referencia = medición anterior (se puede cambiar).':'Sin medición anterior: cargá la temperatura de un punto similar o la ambiente.'}</div>
+      <label>Carga (%)</label><input type="text" inputmode="decimal" id="t-carga" placeholder="Opcional">
+      <div class="termo-res"><div><div class="hist meta">ΔT (medida − referencia)</div><b id="t-dt">— °C</b></div><span id="t-sev" class="pill p-gris">Sin datos</span></div>
+      <label>Severidad</label><select id="t-sevsel" onchange="tSev()">${criterios().map(c=>`<option>${esc(c.severidad)}</option>`).join('')}</select>
+      <label>Acción recomendada</label><input type="text" id="t-acc" value="">
+      <div id="t-estbox" class="oculto"><label>Estado</label><select id="t-est">${ESTADOS_T.map(e=>`<option>${e}</option>`).join('')}</select></div>
+      <label>Observación</label><textarea id="t-obs"></textarea>
+    </div>
+    <div class="card">
+      ${selQuien()}
+      <div class="fila2"><div><label>Fecha</label><input type="date" id="t-fecha"></div><div><label>Hora</label><input type="time" id="t-hora"></div></div>
+      <div class="hist meta" style="margin-top:6px">Si dejás fecha y hora vacías, se completan solas al guardar.</div>
+    </div>
+    <button class="btn" id="t-guardar" onclick="guardarTermo()">Guardar medición</button>`;
+}
+function tCalc(){
+  const t=num($('#t-temp').value), r=num($('#t-ref').value);
+  if($('#t-graf')) $('#t-graf').innerHTML=graficoTemp(serieDe(TP.p.codigo),t);
+  const dt=(t!==null&&r!==null)?Math.round((t-r)*10)/10:null, s=sevDe(dt);
+  $('#t-dt').textContent=dt===null?'— °C':(dt>0?'+':'')+fmtN(dt)+' °C';
+  const pl=$('#t-sev'); pl.textContent=s?s.n:'Sin datos'; pl.className='pill '+(s?pillSev(s.n):'p-gris');
+  if(s){ $('#t-sevsel').value=s.n; tSev(); }
+}
+function tSev(){
+  const n=$('#t-sevsel').value, s=critDe(n);
+  if(criterios().some(x=>x.accion===$('#t-acc').value)||!$('#t-acc').value) $('#t-acc').value=s?s.accion:'';
+  $('#t-estbox').classList.toggle('oculto',!requiereSeg(n));
+}
+function tFoto(inp){
+  const f=inp.files[0]; if(!f) return;
+  const img=new Image(), url=URL.createObjectURL(f);
+  img.onload=()=>{ const M=1600, k=Math.min(1,M/Math.max(img.width,img.height)); const c=document.createElement('canvas');
+    c.width=Math.round(img.width*k); c.height=Math.round(img.height*k); c.getContext('2d').drawImage(img,0,0,c.width,c.height);
+    TP.img=c; TP.foto=c.toDataURL('image/jpeg',0.82); $('#t-prev').src=TP.foto; $('#t-fotobox').classList.remove('oculto');
+    URL.revokeObjectURL(url); TP.manual=false; leerFoto(); };
+  img.src=url;
+}
+function tocarFoto(ev){
+  const r=ev.target.getBoundingClientRect(); leerFoto((ev.clientX-r.left)/r.width,(ev.clientY-r.top)/r.height); TP.manual=false;
+}
+// Recorta la zona del número (cerca de la cruz del centro, o donde se tocó), la amplía y la manda a leer
+async function leerFoto(fx,fy){
+  const src=TP.img, W=src.width, H=src.height;
+  let x0,y0,w,h;
+  if(fx===undefined){ x0=W*.18; y0=H*.36; w=W*.54; h=H*.16; }
+  else { w=W*.30; h=H*.07; x0=W*fx-w/2; y0=H*fy-h/2; }
+  x0=Math.max(0,x0); y0=Math.max(0,y0); w=Math.min(w,W-x0); h=Math.min(h,H-y0);
+  const k=Math.min(4,1600/w), c=document.createElement('canvas'); c.width=Math.round(w*k); c.height=Math.round(h*k);
+  const g=c.getContext('2d'); g.filter='grayscale(1) contrast(1.6)'; g.imageSmoothingQuality='high';
+  g.drawImage(src,x0,y0,w,h,0,0,c.width,c.height);
+  const recorte=c.toDataURL('image/png');
+  $('#t-ocr').classList.remove('oculto'); $('#t-zoom').src=recorte;
+  const txt=$('#t-ocrtxt');
+  if(!API_URL){ txt.textContent='En modo demostración no se lee la foto: escribí la temperatura.'; return; }
+  txt.textContent='Leyendo temperatura…';
+  try{
+    const r=await apiPost({action:'leerTemp',img:recorte});
+    if(r.valor!==null&&r.valor!==undefined){
+      if(!TP.manual){ $('#t-temp').value=String(r.valor).replace('.',','); tCalc(); }
+      txt.innerHTML=`Leído: <b>${fmtN(r.valor)} °C</b>. Verificá que coincida con la pantalla.`;
+    } else txt.textContent='No pude leer el número. Tocá sobre el número en la foto o escribilo.';
+  }catch(e){ txt.textContent='No se pudo leer ('+e.message+'). Escribí la temperatura.'; }
+}
+async function guardarTermo(){
+  const resp=USER, t=num($('#t-temp').value);
+  if(t===null) return toast('Cargá la temperatura medida');
+  if(!resp) return toast('Elegí el responsable');
+  const sev=$('#t-sevsel').value, obs=$('#t-obs').value.trim(), acc=$('#t-acc').value.trim();
+  if(requiereSeg(sev)&&!acc) return toast('Indicá la acción recomendada');
+  const r=num($('#t-ref').value), prev=TP.prev, p=TP.p;
+  const b=$('#t-guardar'); b.disabled=true; b.textContent=TP.foto?'Subiendo foto…':'Guardando…';
+  try{
+    await apiPost({action:'guardarTermo',responsable:resp,fecha:$('#t-fecha').value||hoy(),hora:$('#t-hora').value||horaAhora(),
+      codigo:p.codigo,sector:p.sector,idEquipo:p.id,equipo:p.equipo,componente:p.componente,carga:num($('#t-carga').value),
+      temp:t,ref:r,dt:r===null?null:Math.round((t-r)*10)/10,tempAnt:prev?num(prev.temp):null,difAnt:prev?Math.round((t-num(prev.temp))*10)/10:null,
+      severidad:sev,accion:acc,estado:requiereSeg(sev)?$('#t-est').value:'',obs,foto:TP.foto});
+    toast('Medición guardada'); HIST=await apiGet('historial',{dias:60});
+    vSector(p.sector);
+  }catch(e){ toast('Error al guardar: '+e.message,5000); b.disabled=false; b.textContent='Guardar medición'; }
+}
+
+/* ====== Historial ====== */
+let HTAB='Diario';
+function vHist(tab){
+  if(tab) HTAB=tab; $('#titulo').textContent='Historial';
+  let html = `<h2>Historial</h2><div class="tabs">${['Diario','Semanal','Termografía'].map(t=>`<button class="${t===HTAB?'on':''}" onclick="vHist('${t}')">${t}</button>`).join('')}</div>`;
+  if(HTAB==='Termografía'){
+    const l=[...HIST.termo].sort((a,b)=>(b.fecha+b.hora).localeCompare(a.fecha+a.hora));
+    html += l.length? l.map(t=>`<div class="card hist"><div class="estado-row"><div><b>${esc(nombrePunto(t))}</b>
+      <div class="meta">${esc(t.sector)} · ${fFecha(t.fecha)} ${esc(t.hora)} · ${esc(t.responsable)}</div></div>
+      <span class="pill ${pillSev(t.severidad)}">${fmtN(t.temp)} °C · ${esc(t.severidad||'—')}</span></div>
+      ${(()=>{const d=[]; if(num(t.ref)!==null) d.push('Ref. '+fmtN(t.ref)+' °C'); if(num(t.dt)!==null) d.push('ΔT '+(num(t.dt)>0?'+':'')+fmtN(t.dt)+' °C'); if(num(t.carga)!==null) d.push('Carga '+fmtN(t.carga)+' %'); if(t.estado) d.push('<b>'+esc(t.estado)+'</b>'); return d.length?`<div class="meta" style="margin-top:6px">${d.join(' · ')}</div>`:'';})()}
+      ${t.accion&&requiereSeg(t.severidad)?`<div style="margin-top:4px">${esc(t.accion)}</div>`:''}${t.obs?`<div style="margin-top:4px">${esc(t.obs)}</div>`:''}
+      ${t.foto&&String(t.foto).startsWith('http')?`<div style="margin-top:6px"><a href="${esc(t.foto)}" target="_blank">Ver foto</a></div>`:''}</div>`).join('')
+      : '<div class="vacio">Sin mediciones todavía.</div>';
+  } else {
+    const g={}; HIST.checks.filter(c=>c.tipo===HTAB).forEach(c=>{(g[c.id]=g[c.id]||[]).push(c);});
+    const cons={}; (HIST.consumos||[]).forEach(c=>cons[c.id]=c);
+    const ids=Object.keys(g).sort((a,b)=>(g[b][0].fecha+g[b][0].hora).localeCompare(g[a][0].fecha+g[a][0].hora));
+    html += ids.length? ids.map(id=>{const l=g[id],c=l[0],f=l.filter(x=>esFalla(x.estado)),o=l.filter(x=>!esFalla(x.estado)&&x.obs);
+      return `<div class="card hist"><div class="estado-row"><div><b>${fFecha(c.fecha)} ${esc(c.hora)}</b>${HTAB==='Semanal'?' · Semana '+esc(String(c.semana||semanaISO(c.fecha)).split('-S')[1]):''}
+        <div class="meta">${esc(c.responsable)} · ${l.length} ítems</div></div>
+        <span class="pill ${f.length?'p-warn':'p-ok'}">${f.length?f.length+' a revisar':'Todo OK'}</span></div>
+        ${f.length?`<ul>${f.map(x=>`<li><b>${esc(x.equipo)}</b> – ${esc(x.estado)}${x.valor!==''&&x.valor!=null?' ('+fmtN(x.valor)+')':''}: ${esc(x.obs)}</li>`).join('')}</ul>`:''}
+        ${o.length?`<div class="meta" style="margin-top:6px">${o.map(x=>esc(x.equipo)+': '+esc(x.obs)).join(' · ')}</div>`:''}
+        ${cons[id]?consumosHTML(cons[id]):''}</div>`;}).join('')
+      : `<div class="vacio">Sin checks ${HTAB.toLowerCase()}s en los últimos 60 días.</div>`;
+  }
+  $('#app').innerHTML=html;
+}
+
+/* ====== Arranque ====== */
+if(!API_URL) $('#demo').classList.remove('oculto');
+$('#app').innerHTML='<div class="vacio">Cargando…</div>';
+cargar().then(()=>ir('inicio')).catch(()=>{});
+if('serviceWorker' in navigator) navigator.serviceWorker.register('sw.js').catch(()=>{});
+</script>
+</body>
+</html>
