@@ -1,4 +1,4 @@
-const CACHE = 'mant-v21';
+const CACHE = 'mant-v23';
 const ARCHIVOS = ['./', './index.html', './manifest.json', './icon.svg', './icon-192.png', './icon-512.png', './apple-touch-icon.png'];
 self.addEventListener('install', e => { e.waitUntil(caches.open(CACHE).then(c => c.addAll(ARCHIVOS))); self.skipWaiting(); });
 self.addEventListener('activate', e => {
